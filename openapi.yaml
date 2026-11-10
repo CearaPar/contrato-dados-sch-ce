@@ -1,0 +1,1126 @@
+openapi: 3.1.0
+info:
+  title: Contrato de Dados do SCH-CE — API de Consulta
+  version: 0.5.0
+  description: |
+    Especificação OpenAPI da API de consulta disponibilizada pelos operadores credenciados no Sistema de Créditos Hídricos do Estado do Ceará (SCH-CE).
+
+    Permite à CearaPar sincronizar periodicamente dados operacionais e regulatórios de originadores, instalações, medições, títulos unitários, operações comerciais e baixas definitivas de créditos.
+servers:
+  - url: https://{operador}/
+    variables:
+      operador:
+        default: api.operador.example
+security:
+  - tokenHeader: []
+paths:
+  /originators:
+    get:
+      operationId: list_originators
+      summary: Listagem de originadores
+      parameters:
+        - $ref: "#/components/parameters/updated_since"
+        - $ref: "#/components/parameters/page_token"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Lista paginada de originadores recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Page"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Originator"
+              examples:
+                exemplo:
+                  summary: Exemplo de resposta
+                  value:
+                    items:
+                      - originator_id: orig-0001
+                        legal_name: Reúso Exemplo Ltda.
+                        document: "11222333000181"
+                        person_type: LEGAL
+                        wallet_address: null
+                        updated_at: 2026-10-01T12:00:00Z
+                      - originator_id: orig-0002
+                        legal_name: Maria Exemplo da Silva
+                        document: "12345678909"
+                        person_type: NATURAL
+                        wallet_address: "0x0000000000000000000000000000000000000001"
+                        updated_at: 2026-10-01T12:00:00Z
+                    next_page_token: null
+                    total_count: 2
+        "400": &a1
+          $ref: "#/components/responses/error"
+        "401": *a1
+        "403": *a1
+        "404": *a1
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500": *a1
+  /plants:
+    get:
+      operationId: list_plants
+      summary: Listagem de instalações produtoras
+      parameters:
+        - $ref: "#/components/parameters/updated_since"
+        - $ref: "#/components/parameters/page_token"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Lista paginada de instalações recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Page"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Plant"
+              examples:
+                exemplo:
+                  summary: Exemplo de resposta
+                  value:
+                    items:
+                      - plant_id: plant-0001
+                        originator_id: orig-0001
+                        name: Estação de Reúso Exemplo
+                        modality: REUSE
+                        modality_description: null
+                        status: ACTIVE
+                        country: BR
+                        state: CE
+                        city: Fortaleza
+                        latitude: -3.7319
+                        longitude: -38.5267
+                        total_accumulated_volume_m3: 15230.5
+                        commissioned_at: 2025-03-10
+                        updated_at: 2026-10-01T12:00:00Z
+                      - plant_id: plant-0002
+                        originator_id: orig-0002
+                        name: Captação Experimental
+                        modality: OTHER
+                        modality_description: Condensação por membrana
+                        status: SUSPENDED
+                        country: BR
+                        state: CE
+                        city: Sobral
+                        total_accumulated_volume_m3: 120
+                        updated_at: 2026-10-01T12:00:00Z
+                    next_page_token: null
+                    total_count: 2
+        "400": *a1
+        "401": *a1
+        "403": *a1
+        "404": *a1
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500": *a1
+  /measurements:
+    get:
+      operationId: list_measurements
+      summary: Listagem de lotes de medição
+      parameters:
+        - $ref: "#/components/parameters/updated_since"
+        - $ref: "#/components/parameters/page_token"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Lista paginada de lotes de medição recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Page"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Measurement"
+              examples:
+                exemplo:
+                  summary: Exemplo de resposta
+                  value:
+                    items:
+                      - measurement_id: meas-0001
+                        plant_id: plant-0001
+                        volume_m3: 1000
+                        period_start: 2026-09-01T00:00:00Z
+                        period_end: 2026-09-30T23:59:59Z
+                        status: NOTARIZED
+                        notarization_hash: "0xabc123"
+                        chain: eip155:1
+                        updated_at: 2026-10-01T12:00:00Z
+                    next_page_token: null
+                    total_count: 1
+        "400": *a1
+        "401": *a1
+        "403": *a1
+        "404": *a1
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500": *a1
+  /units:
+    get:
+      operationId: list_units
+      summary: Listagem de títulos unitários
+      parameters:
+        - $ref: "#/components/parameters/updated_since"
+        - $ref: "#/components/parameters/page_token"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Lista paginada de títulos unitários recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Page"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Unit"
+              examples:
+                exemplo:
+                  summary: Exemplo de resposta
+                  value:
+                    items:
+                      - unit_id: cert-0001
+                        measurement_id: meas-0001
+                        unit_volume_m3: 1
+                        issued_at: 2026-10-02T09:00:00Z
+                        expires_at: null
+                        status: ACTIVE
+                        token_id: "42"
+                        tx_hash: "0xdef456"
+                        chain: eip155:1
+                        asset_reference: "0x0000000000000000000000000000000000000002"
+                        updated_at: 2026-10-02T09:00:00Z
+                    next_page_token: null
+                    total_count: 1
+        "400": *a1
+        "401": *a1
+        "403": *a1
+        "404": *a1
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500": *a1
+  /orders:
+    get:
+      operationId: list_orders
+      summary: Listagem de operações de venda
+      parameters:
+        - $ref: "#/components/parameters/updated_since"
+        - $ref: "#/components/parameters/page_token"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Lista paginada de operações de venda recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Page"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Order"
+              examples:
+                exemplo:
+                  summary: Exemplo de resposta
+                  value:
+                    items:
+                      - order_id: ord-0001
+                        ordered_at: 2026-10-05T14:30:00Z
+                        buyer_id: buyer-0001
+                        total_volume_m3: 1000
+                        sold_measurements:
+                          - measurement_id: meas-0001
+                            volume_m3: 600
+                          - measurement_id: meas-0002
+                            volume_m3: 400
+                        sold_units:
+                          - cert-0001
+                        tx_hash: null
+                        chain: null
+                        currency: USD
+                        unit_price: 2
+                        gross_amount: 2000
+                        gross_amount_brl: 11000
+                        fx_rate_brl: 5.5
+                        fx_rate_source: EXCHANGE_CONTRACT
+                        fx_rate_date: 2026-10-05
+                        received_amount_brl: 11000
+                        tax_amount: null
+                        reversal_status: NONE
+                        reversed_at: null
+                        reversal_effect: null
+                        reversal_competence: null
+                        updated_at: 2026-10-05T14:30:00Z
+                      - order_id: ord-0002
+                        ordered_at: 2026-10-06T10:00:00Z
+                        buyer_id: buyer-0001
+                        total_volume_m3: 50
+                        sold_measurements:
+                          - measurement_id: meas-0001
+                            volume_m3: 50
+                        sold_units: []
+                        currency: BRL
+                        unit_price: 10
+                        gross_amount: 500
+                        gross_amount_brl: 500
+                        received_amount_brl: 0
+                        reversal_status: VOIDED
+                        reversed_at: 2026-10-07T08:00:00Z
+                        reversal_effect: DEDUCTED_IN_PERIOD
+                        reversal_competence: 2026-10
+                        updated_at: 2026-10-07T08:00:00Z
+                    next_page_token: null
+                    total_count: 2
+        "400": *a1
+        "401": *a1
+        "403": *a1
+        "404": *a1
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500": *a1
+  /retirements:
+    get:
+      operationId: list_retirements
+      summary: Listagem de baixas de créditos
+      parameters:
+        - $ref: "#/components/parameters/updated_since"
+        - $ref: "#/components/parameters/page_token"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Lista paginada de baixas de créditos recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Page"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Retirement"
+              examples:
+                exemplo:
+                  summary: Exemplo de resposta
+                  value:
+                    items:
+                      - retirement_id: ret-0001
+                        retired_at: 2026-10-10T16:00:00Z
+                        retired_by_buyer_id: buyer-0001
+                        beneficiary_name: Comprador Exemplo S.A.
+                        retired_by_wallet: null
+                        total_volume_m3: 300
+                        consumed_measurements:
+                          - measurement_id: meas-0001
+                            volume_m3: 300
+                        consumed_units:
+                          - cert-0001
+                        purpose: VOLUNTARY_TARGET
+                        declared_purpose: Compensação da pegada hídrica de 2026
+                        retirement_tx_ids:
+                          - "0x789abc"
+                        chain: eip155:1
+                        updated_at: 2026-10-10T16:00:00Z
+                    next_page_token: null
+                    total_count: 1
+        "400": *a1
+        "401": *a1
+        "403": *a1
+        "404": *a1
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500": *a1
+  /buyers:
+    get:
+      operationId: list_buyers
+      summary: Listagem de adquirentes
+      parameters:
+        - $ref: "#/components/parameters/updated_since"
+        - $ref: "#/components/parameters/page_token"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        "200":
+          description: Lista paginada de adquirentes recuperada com sucesso.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Page"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Buyer"
+              examples:
+                exemplo:
+                  summary: Exemplo de resposta
+                  value:
+                    items:
+                      - buyer_id: buyer-0001
+                        person_type: LEGAL
+                        legal_name: Comprador Exemplo S.A.
+                        document: 12ABC34501DE35
+                        country: BR
+                        state: SP
+                        city: São Paulo
+                        wallet_address: null
+                        updated_at: 2026-10-01T12:00:00Z
+                      - buyer_id: buyer-0002
+                        person_type: LEGAL
+                        legal_name: Foreign Buyer Inc.
+                        document: "99999999000191"
+                        country: US
+                        updated_at: 2026-10-01T12:00:00Z
+                    next_page_token: null
+                    total_count: 2
+        "400": *a1
+        "401": *a1
+        "403": *a1
+        "404": *a1
+        "429":
+          $ref: "#/components/responses/rateLimited"
+        "500": *a1
+components:
+  securitySchemes:
+    tokenHeader:
+      type: apiKey
+      in: header
+      name: Token
+      description: |
+        Credencial de autenticação estática enviada no cabeçalho `Token`. Fornecida pelo operador à CearaPar, com segredos distintos para os ambientes de homologação e produção.
+  parameters:
+    updated_since:
+      name: updated_since
+      in: query
+      description: Retorna apenas registros criados ou modificados a partir deste instante (ISO 8601 em UTC). Quando omitido, todos os registros são retornados.
+      schema:
+        type: string
+        format: date-time
+    page_token:
+      name: page_token
+      in: query
+      description: Token de paginação para recuperar a próxima página de resultados. Se omitido, a consulta inicia na primeira página.
+      schema:
+        type: string
+    limit:
+      name: limit
+      in: query
+      description: Quantidade máxima de registros retornados por página.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 100
+  responses:
+    error:
+      description: Erro na requisição. O corpo da resposta traz o objeto com código e mensagem explicativa.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    rateLimited:
+      description: Limite de requisições por segundo excedido.
+      headers:
+        Retry-After:
+          description: Tempo de espera em segundos sugerido antes da próxima tentativa.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    Id:
+      type: string
+      minLength: 1
+    Text:
+      type: string
+      minLength: 1
+    TextOrNull:
+      type:
+        - string
+        - "null"
+      minLength: 1
+    IdArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/Id"
+    IdArrayOrNull:
+      type:
+        - array
+        - "null"
+      items:
+        $ref: "#/components/schemas/Id"
+    Timestamp:
+      type: string
+      format: date-time
+      pattern: Z$
+      description: "Data e hora em UTC no formato ISO 8601 com sufixo Z (exemplo: 2026-10-01T12:00:00Z)."
+    TimestampOrNull:
+      type:
+        - string
+        - "null"
+      format: date-time
+      pattern: Z$
+    Date:
+      type: string
+      format: date
+      description: "Data civil no formato AAAA-MM-DD (ISO 8601)."
+    DateOrNull:
+      type:
+        - string
+        - "null"
+      format: date
+    Competence:
+      type: string
+      pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+      description: "Mês de competência no formato AAAA-MM."
+    CompetenceOrNull:
+      type:
+        - string
+        - "null"
+      pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+    Decimal:
+      type: number
+    DecimalOrNull:
+      type:
+        - number
+        - "null"
+    Document:
+      type: string
+      pattern: ^([0-9]{11}|[0-9A-Z]{12}[0-9]{2})$
+      description: "Identificação fiscal sem pontuação: CPF (11 dígitos) ou CNPJ (14 dígitos, numérico ou alfanumérico)."
+    Country:
+      type: string
+      pattern: ^[A-Z]{2}$
+      description: "Código do país em formato ISO 3166-1 alfa-2 (exemplo: BR)."
+    StateOrNull:
+      type:
+        - string
+        - "null"
+      enum:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+        - null
+      description: "Sigla da unidade federativa brasileira."
+    State:
+      type: string
+      enum:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+      description: "Sigla da unidade federativa brasileira (exemplo: CE)."
+    ChainOrNull:
+      type:
+        - string
+        - "null"
+      pattern: ^[-a-z0-9]{3,8}:[-_a-zA-Z0-9]{1,32}$
+      description: "Identificador da rede blockchain no padrão CAIP-2 (exemplo: eip155:1 para Ethereum)."
+    Currency:
+      type: string
+      pattern: ^[A-Z]{3}$
+      description: "Código da moeda em formato ISO 4217 com 3 letras (exemplo: BRL, USD)."
+    PersonType:
+      enum:
+        - LEGAL
+        - NATURAL
+    Page:
+      title: Envelope de paginação
+      description: Estrutura padrão de retorno contendo os itens da página e o token para a próxima página.
+      type: object
+      required:
+        - items
+        - next_page_token
+        - total_count
+      properties:
+        items:
+          type: array
+        next_page_token:
+          type:
+            - string
+            - "null"
+          minLength: 1
+          description: Token para recuperar a próxima página de resultados.
+        total_count:
+          type: integer
+          minimum: 0
+    Error:
+      title: Detalhe do erro
+      description: Objeto retornado em caso de falha, contendo o código de identificação e a descrição do erro ocorrido.
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              enum:
+                - invalid_parameter
+                - unauthenticated
+                - unauthorized
+                - not_found
+                - rate_limited
+                - internal_error
+            message:
+              type: string
+              minLength: 1
+    Originator:
+      title: Originador de água
+      description: Pessoa física ou jurídica produtora ou geradora dos créditos hídricos certificados.
+      type: object
+      required:
+        - originator_id
+        - legal_name
+        - document
+        - person_type
+        - updated_at
+      properties:
+        originator_id:
+          $ref: "#/components/schemas/Id"
+          description: Identificador estável e exclusivo do originador na plataforma do operador.
+        legal_name:
+          $ref: "#/components/schemas/Text"
+          description: Razão social da empresa ou nome civil completo da pessoa física.
+        document:
+          $ref: "#/components/schemas/Document"
+        person_type:
+          $ref: "#/components/schemas/PersonType"
+        wallet_address:
+          $ref: "#/components/schemas/TextOrNull"
+          description: Endereço público da carteira titular dos ativos tokenizados.
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+    Plant:
+      title: Instalação produtora
+      description: Unidade física ou infraestrutura operacional onde ocorre a produção ou geração de água certificada.
+      type: object
+      required:
+        - plant_id
+        - originator_id
+        - name
+        - modality
+        - status
+        - country
+        - state
+        - city
+        - total_accumulated_volume_m3
+        - updated_at
+      properties:
+        plant_id:
+          $ref: "#/components/schemas/Id"
+        originator_id:
+          $ref: "#/components/schemas/Id"
+          description: Identificador do originador titular desta instalação produtora.
+        name:
+          $ref: "#/components/schemas/Text"
+        modality:
+          enum:
+            - REUSE
+            - DESALINATION
+            - RAINWATER
+            - AIR_TO_WATER
+            - OTHER
+        modality_description:
+          $ref: "#/components/schemas/TextOrNull"
+          description: Detalhamento da modalidade produtiva quando classificada como OTHER.
+        status:
+          enum:
+            - ACTIVE
+            - OVERPRODUCTION
+            - SUSPENDED
+            - TERMINATED
+        country:
+          type: string
+          enum:
+            - BR
+        state:
+          $ref: "#/components/schemas/State"
+        city:
+          $ref: "#/components/schemas/Text"
+        latitude:
+          type:
+            - number
+            - "null"
+          minimum: -90
+          maximum: 90
+        longitude:
+          type:
+            - number
+            - "null"
+          minimum: -180
+          maximum: 180
+        total_accumulated_volume_m3:
+          $ref: "#/components/schemas/Decimal"
+        commissioned_at:
+          $ref: "#/components/schemas/DateOrNull"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+      allOf:
+        - if:
+            properties:
+              modality:
+                const: OTHER
+            required:
+              - modality
+          then:
+            required:
+              - modality_description
+            properties:
+              modality_description:
+                type: string
+    Measurement:
+      title: Lote de medição
+      description: Registro periódico do volume de água gerado em uma instalação produtora.
+      type: object
+      required:
+        - measurement_id
+        - plant_id
+        - volume_m3
+        - period_start
+        - period_end
+        - status
+        - updated_at
+      properties:
+        measurement_id:
+          $ref: "#/components/schemas/Id"
+        plant_id:
+          $ref: "#/components/schemas/Id"
+        volume_m3:
+          $ref: "#/components/schemas/Decimal"
+          description: Volume adicional produzido no período em metros cúbicos (m³), já descontado o cenário de base da instalação.
+        period_start:
+          $ref: "#/components/schemas/Timestamp"
+        period_end:
+          $ref: "#/components/schemas/Timestamp"
+        status:
+          enum:
+            - PENDING
+            - NOTARIZED
+            - ISSUED
+            - REJECTED
+        notarization_hash:
+          $ref: "#/components/schemas/Text"
+          description: Identificador da transação que registra ou notariza a medição na rede blockchain.
+        chain:
+          $ref: "#/components/schemas/ChainOrNull"
+          description: Rede blockchain onde a transação de notarização foi confirmada.
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+      allOf:
+        - if:
+            properties:
+              status:
+                enum:
+                  - NOTARIZED
+                  - ISSUED
+            required:
+              - status
+          then:
+            required:
+              - notarization_hash
+            properties:
+              notarization_hash:
+                type: string
+        - if:
+            properties:
+              notarization_hash:
+                type: string
+            required:
+              - notarization_hash
+          then:
+            required:
+              - chain
+            properties:
+              chain:
+                type: string
+    Unit:
+      title: Título unitário
+      description: Certificado unitário negociável correspondente a 1 m³ de água verificado e emitido a partir de uma medição.
+      type: object
+      required:
+        - unit_id
+        - measurement_id
+        - unit_volume_m3
+        - issued_at
+        - status
+        - updated_at
+      properties:
+        unit_id:
+          $ref: "#/components/schemas/Id"
+        measurement_id:
+          $ref: "#/components/schemas/Id"
+          description: Identificador do lote de medição que lastreia este título unitário.
+        unit_volume_m3:
+          const: 1
+        issued_at:
+          $ref: "#/components/schemas/Timestamp"
+        expires_at:
+          $ref: "#/components/schemas/TimestampOrNull"
+          description: Data e hora de expiração da validade do título.
+        status:
+          enum:
+            - ACTIVE
+            - TRANSFERRED
+            - RETIRED
+            - EXPIRED
+        token_id:
+          $ref: "#/components/schemas/TextOrNull"
+        tx_hash:
+          $ref: "#/components/schemas/TextOrNull"
+        chain:
+          $ref: "#/components/schemas/ChainOrNull"
+          description: Rede blockchain onde o token ou a transação do título está registrado.
+        asset_reference:
+          $ref: "#/components/schemas/TextOrNull"
+          description: Endereço do contrato inteligente ou identificador da classe de ativo na rede blockchain.
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+      allOf:
+        - if:
+            anyOf:
+              - properties:
+                  token_id:
+                    type: string
+                required:
+                  - token_id
+              - properties:
+                  tx_hash:
+                    type: string
+                required:
+                  - tx_hash
+          then:
+            required:
+              - chain
+            properties:
+              chain:
+                type: string
+        - if:
+            properties:
+              token_id:
+                type: string
+            required:
+              - token_id
+          then:
+            required:
+              - asset_reference
+            properties:
+              asset_reference:
+                type: string
+    Order:
+      title: Operação de venda
+      description: Registro de negociação comercial e liquidação financeira de volumes ou títulos de créditos de água.
+      type: object
+      required:
+        - order_id
+        - ordered_at
+        - buyer_id
+        - total_volume_m3
+        - sold_measurements
+        - currency
+        - unit_price
+        - gross_amount
+        - gross_amount_brl
+        - received_amount_brl
+        - reversal_status
+        - updated_at
+      properties:
+        order_id:
+          $ref: "#/components/schemas/Id"
+        ordered_at:
+          $ref: "#/components/schemas/Timestamp"
+        buyer_id:
+          $ref: "#/components/schemas/Id"
+        total_volume_m3:
+          $ref: "#/components/schemas/Decimal"
+        sold_measurements:
+          type: array
+          minItems: 1
+          description: Lotes de medição que lastreiam a venda com os respectivos volumes negociados.
+          items:
+            type: object
+            required:
+              - measurement_id
+              - volume_m3
+            properties:
+              measurement_id:
+                $ref: "#/components/schemas/Id"
+              volume_m3:
+                $ref: "#/components/schemas/Decimal"
+        sold_units:
+          $ref: "#/components/schemas/IdArray"
+        tx_hash:
+          $ref: "#/components/schemas/TextOrNull"
+        chain:
+          $ref: "#/components/schemas/ChainOrNull"
+          description: Rede blockchain onde a liquidação ou transferência do ativo foi registrada.
+        currency:
+          $ref: "#/components/schemas/Currency"
+        unit_price:
+          $ref: "#/components/schemas/Decimal"
+        gross_amount:
+          $ref: "#/components/schemas/Decimal"
+        gross_amount_brl:
+          $ref: "#/components/schemas/Decimal"
+        fx_rate_brl:
+          $ref: "#/components/schemas/DecimalOrNull"
+          description: Taxa de câmbio aplicada para conversão do montante bruto em moeda estrangeira para Reais (BRL).
+        fx_rate_source:
+          enum:
+            - EXCHANGE_CONTRACT
+            - null
+          description: Fonte da cotação cambial utilizada na conversão.
+        fx_rate_date:
+          $ref: "#/components/schemas/DateOrNull"
+          description: Data de fechamento ou referência da taxa cambial aplicada.
+        received_amount_brl:
+          $ref: "#/components/schemas/Decimal"
+        tax_amount:
+          $ref: "#/components/schemas/DecimalOrNull"
+        reversal_status:
+          enum:
+            - NONE
+            - REFUNDED
+            - VOIDED
+            - ANNULLED
+        reversed_at:
+          $ref: "#/components/schemas/TimestampOrNull"
+        reversal_effect:
+          enum:
+            - DEDUCTED_IN_PERIOD
+            - CREDITED_NEXT_PERIOD
+            - null
+        reversal_competence:
+          $ref: "#/components/schemas/CompetenceOrNull"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+      allOf:
+        - if:
+            properties:
+              tx_hash:
+                type: string
+            required:
+              - tx_hash
+          then:
+            required:
+              - chain
+            properties:
+              chain:
+                type: string
+        - if:
+            properties:
+              currency:
+                not:
+                  const: BRL
+            required:
+              - currency
+          then:
+            required:
+              - fx_rate_brl
+              - fx_rate_source
+              - fx_rate_date
+            properties:
+              fx_rate_brl:
+                type: number
+              fx_rate_source:
+                type: string
+              fx_rate_date:
+                type: string
+        - if:
+            properties:
+              reversal_status:
+                enum:
+                  - REFUNDED
+                  - VOIDED
+                  - ANNULLED
+            required:
+              - reversal_status
+          then:
+            required:
+              - reversed_at
+              - reversal_effect
+              - reversal_competence
+            properties:
+              reversed_at:
+                type: string
+              reversal_effect:
+                type: string
+              reversal_competence:
+                type: string
+    Retirement:
+      title: Baixa de créditos
+      description: Registro de aposentadoria ou baixa definitiva e irreversível de créditos de água para compensação ou cumprimento de metas.
+      type: object
+      required:
+        - retirement_id
+        - retired_at
+        - retired_by_buyer_id
+        - beneficiary_name
+        - total_volume_m3
+        - consumed_measurements
+        - purpose
+        - updated_at
+      properties:
+        retirement_id:
+          $ref: "#/components/schemas/Id"
+        retired_at:
+          $ref: "#/components/schemas/Timestamp"
+        retired_by_buyer_id:
+          $ref: "#/components/schemas/Id"
+        beneficiary_name:
+          $ref: "#/components/schemas/Text"
+        retired_by_wallet:
+          $ref: "#/components/schemas/TextOrNull"
+        total_volume_m3:
+          $ref: "#/components/schemas/Decimal"
+        consumed_measurements:
+          type: array
+          minItems: 1
+          description: Lotes de medição consumidos na baixa com os respectivos volumes.
+          items:
+            type: object
+            required:
+              - measurement_id
+              - volume_m3
+            properties:
+              measurement_id:
+                $ref: "#/components/schemas/Id"
+              volume_m3:
+                $ref: "#/components/schemas/Decimal"
+        consumed_units:
+          $ref: "#/components/schemas/IdArray"
+        purpose:
+          enum:
+            - VOLUNTARY_TARGET
+            - ENVIRONMENTAL_REQUIREMENT
+            - SUSTAINABILITY_PERFORMANCE
+          description: Finalidade regulamentar da baixa do crédito hídrico conforme a Lei Estadual nº 19.693/2026.
+        declared_purpose:
+          $ref: "#/components/schemas/TextOrNull"
+          description: Descrição ou justificativa livre complementar sobre a finalidade da baixa declarada.
+        retirement_tx_ids:
+          $ref: "#/components/schemas/IdArrayOrNull"
+          description: Identificadores das transações de queima ou baixa definitiva dos ativos na rede blockchain.
+        chain:
+          $ref: "#/components/schemas/ChainOrNull"
+          description: Rede blockchain onde as transações de baixa definitiva foram confirmadas.
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+      allOf:
+        - if:
+            properties:
+              retirement_tx_ids:
+                type: array
+                minItems: 1
+            required:
+              - retirement_tx_ids
+          then:
+            required:
+              - chain
+            properties:
+              chain:
+                type: string
+    Buyer:
+      title: Adquirente
+      description: Pessoa jurídica ou física adquirente dos créditos de água transacionados na plataforma.
+      type: object
+      required:
+        - buyer_id
+        - person_type
+        - legal_name
+        - document
+        - country
+        - updated_at
+      properties:
+        buyer_id:
+          $ref: "#/components/schemas/Id"
+        person_type:
+          $ref: "#/components/schemas/PersonType"
+        legal_name:
+          $ref: "#/components/schemas/Text"
+        document:
+          $ref: "#/components/schemas/Document"
+        country:
+          $ref: "#/components/schemas/Country"
+        state:
+          $ref: "#/components/schemas/StateOrNull"
+        city:
+          $ref: "#/components/schemas/TextOrNull"
+        wallet_address:
+          $ref: "#/components/schemas/TextOrNull"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"

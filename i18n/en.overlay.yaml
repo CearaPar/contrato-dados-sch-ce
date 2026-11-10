@@ -1,0 +1,229 @@
+overlay: 1.0.0
+info:
+  title: SCH-CE data contract, English text
+  version: 0.5.0
+actions:
+  - target: $['info']
+    update:
+      title: SCH-CE Data Contract — Query API
+      description: |
+        OpenAPI specification for the query API provided by accredited operators within the State of Ceará Water Credits System (SCH-CE).
+
+        Enables CearaPar to periodically synchronize operational and regulatory records including originators, production plants, measurement batches, unit certificates, sales transactions, and final credit retirements.
+  - target: $['paths']['/originators']['get']
+    update:
+      summary: List water originators
+  - target: $['paths']['/originators']['get']['responses']['200']
+    update:
+      description: Paginated list of water originators retrieved successfully.
+  - target: $['paths']['/originators']['get']['responses']['200']['content']['application/json']['examples']['exemplo']
+    update:
+      summary: Response example
+  - target: $['paths']['/plants']['get']
+    update:
+      summary: List producing plants
+  - target: $['paths']['/plants']['get']['responses']['200']
+    update:
+      description: Paginated list of producing plants retrieved successfully.
+  - target: $['paths']['/plants']['get']['responses']['200']['content']['application/json']['examples']['exemplo']
+    update:
+      summary: Response example
+  - target: $['paths']['/measurements']['get']
+    update:
+      summary: List measurement batches
+  - target: $['paths']['/measurements']['get']['responses']['200']
+    update:
+      description: Paginated list of measurement batches retrieved successfully.
+  - target: $['paths']['/measurements']['get']['responses']['200']['content']['application/json']['examples']['exemplo']
+    update:
+      summary: Response example
+  - target: $['paths']['/units']['get']
+    update:
+      summary: List unit certificates
+  - target: $['paths']['/units']['get']['responses']['200']
+    update:
+      description: Paginated list of unit certificates retrieved successfully.
+  - target: $['paths']['/units']['get']['responses']['200']['content']['application/json']['examples']['exemplo']
+    update:
+      summary: Response example
+  - target: $['paths']['/orders']['get']
+    update:
+      summary: List sales orders
+  - target: $['paths']['/orders']['get']['responses']['200']
+    update:
+      description: Paginated list of sales orders retrieved successfully.
+  - target: $['paths']['/orders']['get']['responses']['200']['content']['application/json']['examples']['exemplo']
+    update:
+      summary: Response example
+  - target: $['paths']['/retirements']['get']
+    update:
+      summary: List credit retirements
+  - target: $['paths']['/retirements']['get']['responses']['200']
+    update:
+      description: Paginated list of credit retirements retrieved successfully.
+  - target: $['paths']['/retirements']['get']['responses']['200']['content']['application/json']['examples']['exemplo']
+    update:
+      summary: Response example
+  - target: $['paths']['/buyers']['get']
+    update:
+      summary: List buyers
+  - target: $['paths']['/buyers']['get']['responses']['200']
+    update:
+      description: Paginated list of buyers retrieved successfully.
+  - target: $['paths']['/buyers']['get']['responses']['200']['content']['application/json']['examples']['exemplo']
+    update:
+      summary: Response example
+  - target: $['components']['securitySchemes']['tokenHeader']
+    update:
+      description: |
+        Static authentication credential supplied in the `Token` header. Issued by the operator to CearaPar, with distinct keys for staging and production environments.
+  - target: $['components']['parameters']['updated_since']
+    update:
+      description: Filters records created or updated on or after this timestamp (ISO 8601 UTC). When omitted, all records are returned.
+  - target: $['components']['parameters']['page_token']
+    update:
+      description: Pagination token to retrieve the next page of results. When omitted, retrieval starts from the first page.
+  - target: $['components']['parameters']['limit']
+    update:
+      description: Maximum number of records to return per page.
+  - target: $['components']['responses']['error']
+    update:
+      description: Request error. The response body contains an error object with an identifier code and descriptive message.
+  - target: $['components']['responses']['rateLimited']
+    update:
+      description: Request rate limit exceeded.
+  - target: $['components']['responses']['rateLimited']['headers']['Retry-After']
+    update:
+      description: Recommended wait time in seconds before retrying the request.
+  - target: $['components']['schemas']['Timestamp']
+    update:
+      description: "ISO 8601 UTC timestamp with Z suffix (e.g. 2026-10-01T12:00:00Z)."
+  - target: $['components']['schemas']['Date']
+    update:
+      description: "Calendar date in YYYY-MM-DD format (ISO 8601)."
+  - target: $['components']['schemas']['Competence']
+    update:
+      description: "Accounting competence period in YYYY-MM format."
+  - target: $['components']['schemas']['Document']
+    update:
+      description: "Tax identification number without punctuation: CPF (11 digits) or CNPJ (14 digits, numeric or alphanumeric)."
+  - target: $['components']['schemas']['Country']
+    update:
+      description: "Two-letter country code according to ISO 3166-1 alpha-2 (e.g. BR)."
+  - target: $['components']['schemas']['StateOrNull']
+    update:
+      description: "Two-letter Brazilian state abbreviation."
+  - target: $['components']['schemas']['State']
+    update:
+      description: "Two-letter Brazilian state abbreviation (e.g. CE)."
+  - target: $['components']['schemas']['ChainOrNull']
+    update:
+      description: "Blockchain network identifier in CAIP-2 standard (e.g. eip155:1 for Ethereum)."
+  - target: $['components']['schemas']['Currency']
+    update:
+      description: "Three-letter currency code according to ISO 4217 (e.g. BRL, USD)."
+  - target: $['components']['schemas']['Page']
+    update:
+      title: Pagination envelope
+      description: Standard response structure containing the list of items and the token for the next page.
+  - target: $['components']['schemas']['Page']['properties']['next_page_token']
+    update:
+      description: Token to retrieve the next page of results.
+  - target: $['components']['schemas']['Error']
+    update:
+      title: Error detail
+      description: Object returned on request failure containing an error code and human-readable explanation.
+  - target: $['components']['schemas']['Originator']
+    update:
+      title: Water originator
+      description: Natural person or legal entity producing or generating certified water credits.
+  - target: $['components']['schemas']['Originator']['properties']['originator_id']
+    update:
+      description: Stable and unique identifier of the originator on the operator's platform.
+  - target: $['components']['schemas']['Originator']['properties']['legal_name']
+    update:
+      description: Registered corporate name or full legal civil name.
+  - target: $['components']['schemas']['Originator']['properties']['wallet_address']
+    update:
+      description: Public digital wallet address holding the tokenized assets.
+  - target: $['components']['schemas']['Plant']
+    update:
+      title: Producing plant
+      description: Physical facility or operational infrastructure where water production or generation takes place.
+  - target: $['components']['schemas']['Plant']['properties']['originator_id']
+    update:
+      description: Identifier of the originator owning this producing plant.
+  - target: $['components']['schemas']['Plant']['properties']['modality_description']
+    update:
+      description: Detailed description of the production modality when classified as OTHER.
+  - target: $['components']['schemas']['Measurement']
+    update:
+      title: Measurement batch
+      description: Periodic record of water volume generated at a producing plant.
+  - target: $['components']['schemas']['Measurement']['properties']['volume_m3']
+    update:
+      description: Net volume produced during the period in cubic meters (m³), after deducting the plant baseline.
+  - target: $['components']['schemas']['Measurement']['properties']['notarization_hash']
+    update:
+      description: Transaction hash recording or notarizing the measurement on the blockchain network.
+  - target: $['components']['schemas']['Measurement']['properties']['chain']
+    update:
+      description: Blockchain network where the notarization transaction was confirmed.
+  - target: $['components']['schemas']['Unit']
+    update:
+      title: Unit certificate
+      description: Tradeable unit certificate representing 1 m³ of verified water generated from a measurement batch.
+  - target: $['components']['schemas']['Unit']['properties']['measurement_id']
+    update:
+      description: Identifier of the measurement batch backing this unit certificate.
+  - target: $['components']['schemas']['Unit']['properties']['expires_at']
+    update:
+      description: Expiration timestamp of the certificate.
+  - target: $['components']['schemas']['Unit']['properties']['chain']
+    update:
+      description: Blockchain network where the unit token or transaction is recorded.
+  - target: $['components']['schemas']['Unit']['properties']['asset_reference']
+    update:
+      description: Smart contract address or asset class identifier on the blockchain network.
+  - target: $['components']['schemas']['Order']
+    update:
+      title: Sales order
+      description: Record of commercial trade and financial settlement of water credit volumes or unit certificates.
+  - target: $['components']['schemas']['Order']['properties']['sold_measurements']
+    update:
+      description: Measurement batches backing the sale with their respective transacted volumes.
+  - target: $['components']['schemas']['Order']['properties']['chain']
+    update:
+      description: Blockchain network where the settlement or asset transfer was recorded.
+  - target: $['components']['schemas']['Order']['properties']['fx_rate_brl']
+    update:
+      description: Foreign exchange rate applied to convert the gross transaction amount to Brazilian Reais (BRL).
+  - target: $['components']['schemas']['Order']['properties']['fx_rate_source']
+    update:
+      description: Source of the foreign exchange rate quotation used in conversion.
+  - target: $['components']['schemas']['Order']['properties']['fx_rate_date']
+    update:
+      description: Reference or closing date of the applied foreign exchange rate.
+  - target: $['components']['schemas']['Retirement']
+    update:
+      title: Credit retirement
+      description: Record of final, irreversible retirement of water credits for offsetting or compliance targets.
+  - target: $['components']['schemas']['Retirement']['properties']['consumed_measurements']
+    update:
+      description: Measurement batches consumed in the retirement with their respective volumes.
+  - target: $['components']['schemas']['Retirement']['properties']['purpose']
+    update:
+      description: Statutory purpose of the water credit retirement under Ceará State Law No. 19,693/2026.
+  - target: $['components']['schemas']['Retirement']['properties']['declared_purpose']
+    update:
+      description: Additional freeform description or justification regarding the declared retirement purpose.
+  - target: $['components']['schemas']['Retirement']['properties']['retirement_tx_ids']
+    update:
+      description: Transaction hashes recording the final retirement or burn of the assets on the blockchain.
+  - target: $['components']['schemas']['Retirement']['properties']['chain']
+    update:
+      description: Blockchain network where the final retirement transactions were confirmed.
+  - target: $['components']['schemas']['Buyer']
+    update:
+      title: Buyer
+      description: Natural person or legal entity purchasing or holding beneficiary rights to water credits.

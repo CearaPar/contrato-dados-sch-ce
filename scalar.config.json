@@ -1,0 +1,8 @@
+{
+  "withDefaultFonts": false,
+  "telemetry": false,
+  "hideClientButton": true,
+  "hideTestRequestButton": true,
+  "showDeveloperTools": "never",
+  "agent": { "disabled": true }
+}
